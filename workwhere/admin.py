@@ -10,11 +10,6 @@ admin.site.register(Reservation, ReservationAdmin)
 class WorkplaceInline(admin.TabularInline):
     model = Workplace
     extra = 3
-    
-# class WorkplaceAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'location')
-
-# admin.site.register(Workplace, WorkplaceAdmin)
 
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('name', 'isoffice')
@@ -27,6 +22,11 @@ class EmployeeAdmin(admin.ModelAdmin):
     search_fields = ['last_name', 'first_name', 'user_id']
 
 admin.site.register(Employee, EmployeeAdmin)
+
+# class WorkplaceAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'location')
+
+# admin.site.register(Workplace, WorkplaceAdmin)
 
 admin.site.register(Floor)
 
