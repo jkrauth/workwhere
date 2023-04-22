@@ -19,31 +19,31 @@ Use the `-e` option if you are a developer and add changes to the application.
 1. Add "workwhere" to your INSTALLED_APPS setting like this:
 
 ```python
-    INSTALLED_APPS = [
-        ...
-        'workwhere',
-    ]
+INSTALLED_APPS = [
+    ...
+    'workwhere',
+]
 ```
 
-And if you didn't specify media locations yet, add the lines
+If you didn't specify media locations yet, add the lines
 
 ```python
-    MEDIA_URL = "/media/"
-    MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 ```
 
 2. Include the workwhere URLconf in your project urls.py like this::
 
 ```python
-    path('workwhere/', include('workwhere.urls')),
+path('workwhere/', include('workwhere.urls')),
 ```
 
 And for development also add the lines
 
 ```python
-    if settings.DEBUG:
-        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-        urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) 
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) 
 ```
 
 3. Run ``python manage.py migrate`` to create the workhwere models.

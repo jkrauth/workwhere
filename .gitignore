@@ -1,4 +1,5 @@
 *.py~
 __pycache__
 workwhere.egg-info
+django_workwhere.egg-info
 dist
