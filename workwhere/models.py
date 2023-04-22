@@ -8,7 +8,7 @@ from django.core.files.storage import FileSystemStorage
 class Employee(models.Model):
     first_name = models.CharField(max_length=80)
     last_name = models.CharField(max_length=80)
-    dlr_id = models.CharField(max_length=20, unique=True)
+    user_id = models.CharField(max_length=20, unique=True)
     isactive = models.BooleanField(default=True)
 
     class Meta:

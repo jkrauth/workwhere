@@ -36,7 +36,6 @@ def reserve(request):
                 defaults={'workplace': selected_workplace_id})         
 
             return HttpResponseRedirect(reverse('workwhere:today'))
-        print("not validated")
     else:
         form = ReservationForm()
 
@@ -53,7 +52,6 @@ def load_workplaces(request):
     reserved_pk = None
     if day and employee:
         choice_workplaces = Workplace.objects.exclude(Q(reservation__day=day) & ~Q(reservation__employee=employee)).order_by('location__isoffice')
-        print(choice_workplaces)
 
         reserved_workplace = Workplace.objects.filter(reservation__day=day, reservation__employee=employee).first()
         if reserved_workplace:
@@ -70,6 +68,9 @@ def load_workplaces(request):
 
 
 class Today(generic.View):
+    """
+    Gets reservation data on office workplaces for current day.
+    """
     template_name = 'workwhere/today.html'
 
     def get(self, request):
@@ -84,13 +85,16 @@ class Today(generic.View):
                 res[workplace.name] = "free"
 
         context = {
-            'rooms_today': res,
+            'desks_today': res,
             'date': timezone.now(),
         }
 
         return render(request, self.template_name, context)
 
 def week(request, year, week):
+    """
+    Gets reservation data for office workplaces in a given week.
+    """
     try:
         monday = datetime.date.fromisocalendar(year, week, 1)
     except ValueError:

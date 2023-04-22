@@ -1,10 +1,10 @@
 <h1>Reservations on {{ date | date:"l, M d (Y)" }}</h1>
-{% if rooms_today %}
+{% if desks_today %}
 <ul>
-    {% for room, reservation in rooms_today.items %}
-    <li>{{room}}, {{reservation}}</li>
+    {% for desk, reservation in desks_today.items %}
+    <li>{{desk}}, {{reservation}}</li>
     {% endfor %}
 </ul>
 {% else %}
-<p>No workplaces exist.</p>
+<p>No office desks are available.</p>
 {% endif %}

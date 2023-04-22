@@ -3,7 +3,7 @@
 {% block content %}
 
 <div id="availabilityList" data-availability-url="{% url 'workwhere:ajax_update_today' %}">
-    {% include "workwhere/today_list.html" with date=date rooms_today=rooms_today %}
+    {% include "workwhere/today_list.html" with date=date desks_today=desks_today %}
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

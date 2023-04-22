@@ -1,6 +1,6 @@
 # WorkWhere
 
-WorkWhere is a simple web-based Django app for workplace reservations.
+WorkWhere is a web-based Django app for workplace reservations. It is kept very simple and best suited for small enterprises.
 
 Detailed documentation is in the "docs" directory.
 
@@ -52,3 +52,4 @@ if settings.DEBUG:
    to create employees and workplaces (you'll need the Admin app enabled).
 
 5. Visit http://127.0.0.1:8000/workwhere/ to start.
+
