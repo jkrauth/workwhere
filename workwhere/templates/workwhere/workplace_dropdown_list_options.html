@@ -1,0 +1,10 @@
+<option value="">---------</option>
+{% for workplace in workplaces %}
+
+{% if reserved_pk == workplace.pk %}
+<option selected value="{{ workplace.pk }}">{{ workplace }}</option>
+{% else %}
+<option value="{{ workplace.pk }}">{{ workplace }}</option>
+{% endif %}
+
+{% endfor %}

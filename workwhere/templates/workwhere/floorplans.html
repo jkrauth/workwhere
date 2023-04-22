@@ -1,0 +1,14 @@
+{% extends "workwhere/base_generic.html" %}
+
+{% block content %}
+
+<h1>Office floor maps</h1>
+
+<ul>
+    {% for floormap in object_list %}
+    <h2>{{ floormap }}</h2>
+    <img class="workplace-img" src="{{ floormap.floormap.url }}" alt="{{ floormap.name }}" />
+    {% endfor %}
+</ul>
+
+{% endblock %}

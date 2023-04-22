@@ -1,0 +1,5 @@
+include LICENSE
+include README.md
+recursive-include workwhere/static *
+recursive-include workwhere/templates *
+recursive-include docs *

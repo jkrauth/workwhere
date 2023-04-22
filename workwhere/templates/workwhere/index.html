@@ -1,0 +1,12 @@
+{% extends "workwhere/base_generic.html" %}
+
+{% block content %}
+  <h1>Home</h1>
+  <p>Welcome to DLR WorkWhere Website!</p>
+  <h2>Dynamic content</h2>
+  <p>The page has the following record counts:</p>
+  <ul>
+    <li><strong>Users:</strong> {{ num_users }}</li>
+    <li><strong>Workplaces:</strong> {{ num_workplaces }}</li>
+  </ul>
+{% endblock %}
