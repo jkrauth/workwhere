@@ -1,4 +1,4 @@
-# django-workwhere
+# WorkWhere
 
 WorkWhere is a simple web-based Django app for workplace reservations.
 
