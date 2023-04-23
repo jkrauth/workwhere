@@ -70,13 +70,13 @@ class Reservation(models.Model):
         # This is therefore a workaround.
         qs1 = Reservation.objects.filter(day=self.day, workplace=self.workplace)
         if qs1.filter(workplace__location__isoffice=True).exclude(employee=self.employee).exists():
-            raise ValidationError('Unique office workplaces per day.')
+            raise ValidationError('Only one reservation per day and office workplace.')
 
         # Instead of a unique_employee_per_day UniqueConstraint we do 
         # this here. Then it is easier to change existing reservations.
         qs2 = Reservation.objects.exclude(pk=self.pk).filter(employee=self.employee, day=self.day)
         if qs2.exists():
-            raise ValidationError('Only one reservation oper day allowed.')
+            raise ValidationError('Only one reservation per day and user.')
         #return super().clean(*args, **kwargs)
 
     def save(self, *args, **kwargs):
