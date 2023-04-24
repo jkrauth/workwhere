@@ -1,3 +1,5 @@
+import datetime
+
 from django.test import TestCase
 from django.urls import reverse
 from django.core.exceptions import ValidationError
@@ -24,14 +26,16 @@ class ReservationModelTest(TestCase):
 
     def test_two_reservations_of_employee_on_one_day(self):
         l = Location.objects.create(name='location1', isoffice=True)
-        w1 = Workplace.objects.create(name='A1', location=l)
-        w2 = Workplace.objects.create(name='A2', location=l)
+        w1 = Workplace.objects.create(name='W1', location=l)
+        w2 = Workplace.objects.create(name='W2', location=l)
         e = Employee.objects.create(first_name='Dave', last_name='Miller', user_id='dav_mi')
         day = "2023-04-22"
         
-        Reservation.objects.create(day=day, employee=e, workplace=w1)
+        # First reservation
+        Reservation(day=day, employee=e, workplace=w1).save()
         with self.assertRaises(ValidationError):
-            Reservation.objects.create(day=day, employee=e, workplace=w2)
+            # Second reservation on same day
+            Reservation(day=day, employee=e, workplace=w2).save()
 
 
 class ReservationFormTests(TestCase):
@@ -42,6 +46,36 @@ class ReservationFormTests(TestCase):
         self.assertEqual(form.errors['day'], ['Invalid date - date in past'])
 
     # also add tests for non-working days and days too far in the future.
+
+    def test_correct_employee_queryset(self):
+        Employee(first_name='Dave', last_name='Miller', user_id='dav_mi').save()
+        Employee(first_name='Clare', last_name='Smith', user_id='cla_sm', isactive=False).save()
+        actual = ReservationForm().fields['employee'].queryset
+        expected = Employee.objects.filter(first_name='Dave')
+        self.assertQuerysetEqual(actual, expected)
+
+    def test_correct_workplace_queryset(self):
+        l = Location.objects.create(name='location1', isoffice=True)
+        w1 = Workplace.objects.create(name='W1', location=l)
+        w2 = Workplace.objects.create(name='W2', location=l)
+        e1 = Employee.objects.create(first_name='Dave', last_name='Miller', user_id='dav_mi')
+        e2 = Employee.objects.create(first_name='Clare', last_name='Smith', user_id='cla_sm')
+
+        today = datetime.date(2023, 4, 21)
+        tomorrow = today + datetime.timedelta(days=1)
+
+        # One reservation today:
+        Reservation(day=today, employee=e1, workplace=w1).save()
+        # Everything booked tomorrow:
+        Reservation(day=tomorrow, employee=e1, workplace=w1).save()
+        Reservation(day=tomorrow, employee=e2, workplace=w2).save()
+
+        # Employee only has a reservation on a different day, and there 
+        # should be one workplace still left today
+        form = ReservationForm({'employee': e2, 'day': today})
+        actual = form.fields['workplace'].queryset
+        expected = Workplace.objects.filter(name="W2")
+        self.assertQuerysetEqual(actual, expected)
 
 class TodayViewTests(TestCase):
     def test_no_workplaces(self):

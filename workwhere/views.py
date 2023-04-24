@@ -4,7 +4,6 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.http import Http404
-from django.db.models import Q
 
 
 import datetime
@@ -51,11 +50,12 @@ def load_workplaces(request):
     employee = request.GET.get('employee')
     reserved_pk = None
     if day and employee:
-        choice_workplaces = Workplace.objects.exclude(Q(reservation__day=day) & ~Q(reservation__employee=employee)).order_by('location__isoffice')
+        already_reserved_workplace = Workplace.objects.filter(reservation__employee=employee, reservation__day=day)
+        free_workplaces = Workplace.objects.exclude(reservation__day=day)
+        choice_workplaces = (free_workplaces | already_reserved_workplace).order_by('location__isoffice')
 
-        reserved_workplace = Workplace.objects.filter(reservation__day=day, reservation__employee=employee).first()
-        if reserved_workplace:
-            reserved_pk = reserved_workplace.pk
+        if already_reserved_workplace.exists():
+            reserved_pk = already_reserved_workplace.first().pk
     else:
         choice_workplaces = Workplace.objects.none()
 

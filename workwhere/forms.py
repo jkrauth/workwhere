@@ -35,14 +35,17 @@ class ReservationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['employee'].queryset = Employee.objects.filter(isactive=True)
         self.fields['workplace'].queryset = Workplace.objects.none()
-        self.label_suffix = ""
+        self.label_suffix = "" # Remove default ":"
 
         if 'day' in self.data and 'employee' in self.data:
             try:
                 day = self.data['day']
                 employee = self.data['employee']
-                free_workplaces = Workplace.objects.exclude(Q(reservation__day=day) & ~Q(reservation__employee=employee))
-                self.fields['workplace'].queryset = free_workplaces.order_by('location__isoffice')
+                
+                free_workplaces = Workplace.objects.exclude(reservation__day=day)
+                already_reserved_workplace = Workplace.objects.filter(reservation__day=day, reservation__employee=employee)
+                available_workplaces =  free_workplaces | already_reserved_workplace
+                self.fields['workplace'].queryset = available_workplaces.order_by('location__isoffice')
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty workplace queryset
 
