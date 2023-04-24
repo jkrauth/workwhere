@@ -50,10 +50,10 @@ def load_workplaces(request):
     employee = request.GET.get('employee')
     reserved_pk = None
     if day and employee:
-        already_reserved_workplace = Workplace.objects.filter(reservation__employee=employee, reservation__day=day)
-        free_workplaces = Workplace.objects.exclude(reservation__day=day)
-        choice_workplaces = (free_workplaces | already_reserved_workplace).order_by('location__isoffice')
+        other_desk_reservations_today = Reservation.objects.filter(day=day, workplace__location__isoffice=True).exclude(employee=employee)
+        choice_workplaces = Workplace.objects.exclude(reservation__in=other_desk_reservations_today).order_by('location__isoffice')
 
+        already_reserved_workplace = Workplace.objects.filter(reservation__employee=employee, reservation__day=day)
         if already_reserved_workplace.exists():
             reserved_pk = already_reserved_workplace.first().pk
     else:

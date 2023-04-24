@@ -24,6 +24,8 @@ class ReservationModelTest(TestCase):
         with self.assertRaises(ValidationError):
             Reservation.objects.create(day=day, employee=e2, workplace=w)
 
+    # TBD: Test that two people can reserve same isoffice=False workplace on same day.
+
     def test_two_reservations_of_employee_on_one_day(self):
         l = Location.objects.create(name='location1', isoffice=True)
         w1 = Workplace.objects.create(name='W1', location=l)
