@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1>Office floor maps</h1>
+{% include "workwhere/title.html" with title="Office floor maps" %}
 
 <ul>
     {% for floormap in object_list %}

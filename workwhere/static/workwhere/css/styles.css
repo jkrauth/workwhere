@@ -37,3 +37,8 @@
 .weektable td {
   padding: 5px;
 }
+
+.nice-format a {
+  font-weight: 500;
+  color: black;
+}

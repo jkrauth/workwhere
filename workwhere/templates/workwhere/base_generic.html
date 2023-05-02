@@ -12,8 +12,8 @@
   {% bootstrap_javascript %}
 
   {% load static %}
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}" type="text/css"/>
-  <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/png"/>
+  <link rel="stylesheet" href="{% static 'workwhere/css/styles.css' %}" type="text/css"/>
+  <link rel="shortcut icon" href="{% static 'workwhere/favicon.ico' %}" type="image/png"/>
 </head>
 
 <body>
@@ -29,12 +29,11 @@
       <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
         <div class="position-sticky pt-3">
           {% block sidebar %}
-          <ul class="nav flex-column">
+          <ul class="nav flex-column nice-format">
             <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:index' %}">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:reserve' %}">Reserve</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:today' %}">Today</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:week_redirect' %}">Week</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:floorplans' %}">Map</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:today' %}">Today</a></li>
           </ul>
           {% endblock %}
         </div>

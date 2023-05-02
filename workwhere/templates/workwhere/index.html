@@ -1,12 +1,51 @@
 {% extends "workwhere/base_generic.html" %}
 
 {% block content %}
-  <h1>Home</h1>
-  <p>Welcome to the WorkWhere website!</p>
-  <h2>Dynamic content</h2>
-  <p>The page has the following record counts:</p>
-  <ul>
-    <li><strong>Users:</strong> {{ num_users }}</li>
-    <li><strong>Workplaces:</strong> {{ num_workplaces }}</li>
-  </ul>
+{% include "workwhere/title.html" with title="Reserve your spot" %}
+
+<div style="width: 25%">
+  <form method="post" id="reservationForm" data-workplaces-url="{% url 'workwhere:ajax_load_workplaces' %}" novalidate>
+    {% csrf_token %}
+    <div style="margin-bottom: 10px;">
+      {{ form.as_div }}
+    </div>
+    <button class="btn btn-primary" type="submit">Save</button>
+  </form>
+
+  {% if alert == "success" %}
+  <div class="alert alert-success" role="alert">
+    {{ message }}
+  </div>
+  {% elif alert == "error" %}
+  <div class="alert alert-danger" role="alert">
+    {{ message }}
+  </div>
+  {% endif %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+  $(document).ready(function () {
+
+    $("#id_employee, #id_day").change(function () {
+      var url = $("#reservationForm").attr("data-workplaces-url");  // get the url of the `load_workplaces` view
+      var day = $("#id_day").val();  // get the selected date from the HTML input
+      var employeeId = $("#id_employee").val(); // get the selected employee from the HTML input
+
+      $.ajax({              // initialize an AJAX request
+        url: url,           // set the url of the request (= localhost:8000/workwhere/ajax/load-workplaces/)
+        data: {
+          'day': day,       // add the date to the GET parameters
+          'employee': employeeId,
+        },
+        success: function (data) {   // `data` is the return of the `load_workplaces` view function
+          $("#id_workplace").html(data);  // replace the contents of the workplace input with the data that came from the server
+        }
+      });
+    });
+
+  });
+
+</script>
+
 {% endblock %}

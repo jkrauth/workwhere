@@ -6,7 +6,6 @@ from . import views
 app_name = 'workwhere' # Set application namespace
 urlpatterns = [
     path('', views.index, name='index'),
-    path('reserve/', views.reserve, name='reserve'),
     path('week/', views.WeekRedirect.as_view(), name='week_redirect'),
     path('week/<int:year>/<int:week>/', views.week, name='week'),
     path('today/', views.Today.as_view(), name='today'),

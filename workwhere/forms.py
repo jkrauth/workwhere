@@ -7,34 +7,37 @@ from django.db.models import Q
 import datetime
 from .models import Reservation, Workplace, Employee
 
+
+class SearchSelect(forms.Select):
+    template_name = 'workwhere/search_select.html'
+
+
 class ReservationForm(forms.ModelForm):
     class Meta:
         model = Reservation
         fields = ['employee', 'day', 'workplace']
-        widgets = {
-            'employee': forms.Select(
-                attrs={
-                    'class': 'form-select selectpicker', 
-                    }),
-            'day': forms.DateInput(
-                #format=(r'%m/%d/%y'),
-                attrs={'class': 'form-control', 
-                       #'placeholder': 'Select a date',
-                       'type': 'date',  # <--- IF I REMOVE THIS LINE, THE INITIAL VALUE IS DISPLAYED
-                       'min': str(datetime.date.today()),
-                       'max': str(datetime.date.today()+datetime.timedelta(weeks=4)),
-
-                      }),
-            'workplace': forms.Select(
-                attrs={
-                    'class': 'form-control',
-                    }),            
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        self.fields['employee'].widget.attrs.update({'class': 'form-select selectpicker'})
+        # self.fields['employee'].widget = SearchSelect(attrs={
+        #     'class': 'form-control', 
+        #     'placeholder': 'Type to search...',
+        #     })
         self.fields['employee'].queryset = Employee.objects.filter(isactive=True)
+
+        self.fields['day'].widget = forms.DateInput(attrs={
+            'class': 'form-control', 
+            'type': 'date',  # <--- IF I REMOVE THIS LINE, THE INITIAL VALUE IS DISPLAYED
+            'min': str(datetime.date.today()),
+            'max': str(datetime.date.today()+datetime.timedelta(weeks=4)),
+            })
+
+        #self.fields['workplace'].widget = SearchSelect(attrs={'class': 'form-control', 'placeholder': 'Type to search...'})
         self.fields['workplace'].queryset = Workplace.objects.none()
+        self.fields['workplace'].widget.attrs.update({'class': 'form-select selectpicker'})
+
         self.label_suffix = "" # Remove default ":"
 
         if 'day' in self.data and 'employee' in self.data:
@@ -43,7 +46,7 @@ class ReservationForm(forms.ModelForm):
                 employee = self.data['employee']
 
                 other_desk_reservations_today = Reservation.objects.filter(day=day, workplace__location__isoffice=True).exclude(employee=employee)
-                available_workplaces = Workplace.objects.exclude(reservation__in=other_desk_reservations_today).order_by('location__isoffice')
+                available_workplaces = Workplace.objects.exclude(reservation__in=other_desk_reservations_today)
                 self.fields['workplace'].queryset = available_workplaces.order_by('location__isoffice')
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty workplace queryset
