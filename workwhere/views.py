@@ -33,7 +33,7 @@ def index(request):
             alert = "error"
             message = "Reservation failed"
     else:
-        form = ReservationForm()
+        form = ReservationForm(initial={'day': timezone.now().date()})
         alert = None
         message = None
 
