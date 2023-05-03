@@ -8,7 +8,7 @@ from django.http import Http404
 
 import datetime
 
-from .models import Reservation, Workplace, Employee, Floor
+from .models import Reservation, Workplace, Employee, Floor, Location
 from .forms import ReservationForm
 
 
@@ -77,16 +77,20 @@ class Today(generic.View):
     def get(self, request):
         reservations_today = Reservation.objects.filter(day=timezone.now().date())
         
-        workplaces = Workplace.objects.filter(location__isoffice=True).order_by('name')
-        res = dict()
-        for workplace in workplaces:
-            try:
-                res[workplace.name] = reservations_today.get(workplace=workplace).employee
-            except Reservation.DoesNotExist: 
-                res[workplace.name] = "free"
+        locationDict = dict()
+        for location in Location.objects.all():
+            workplaces = Workplace.objects.filter(location=location, location__isoffice=True).order_by('name')
+            workplace_status = dict()
+            for workplace in workplaces:
+                try:
+                    workplace_status[workplace.name] = reservations_today.get(workplace=workplace).employee
+                except Reservation.DoesNotExist: 
+                    workplace_status[workplace.name] = "free"
 
+            locationDict[location.name] = workplace_status
+        print(locationDict)
         context = {
-            'desks_today': res,
+            'desks_today': locationDict,
             'title': f"Reservations on {timezone.now():%A, %B %d (%Y)}"
         }
 

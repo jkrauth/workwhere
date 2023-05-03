@@ -1,11 +1,17 @@
 {% include "workwhere/title.html" with title=title %}
 
 {% if desks_today %}
-<ul>
-    {% for desk, reservation in desks_today.items %}
-    <li>{{desk}}, {{reservation}}</li>
-    {% endfor %}
-</ul>
+<div>
+{% for floor, reservations in desks_today.items %}
+<div style="display: inline-block; vertical-align: top;">
+    <ul>
+        {% for desk, reservation in reservations.items %}
+        <li>{{desk}}, {{reservation}}</li>
+        {% endfor %}
+    </ul>    
+</div>
+{% endfor %}
+</div>
 {% else %}
 <p>No office desks are available.</p>
 {% endif %}

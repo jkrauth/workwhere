@@ -11,7 +11,6 @@ from .models import Reservation, Workplace, Employee
 class SearchSelect(forms.Select):
     template_name = 'workwhere/search_select.html'
 
-
 class ReservationForm(forms.ModelForm):
     class Meta:
         model = Reservation
@@ -35,8 +34,8 @@ class ReservationForm(forms.ModelForm):
             })
 
         #self.fields['workplace'].widget = SearchSelect(attrs={'class': 'form-control', 'placeholder': 'Type to search...'})
-        self.fields['workplace'].queryset = Workplace.objects.none()
         self.fields['workplace'].widget.attrs.update({'class': 'form-select selectpicker'})
+        self.fields['workplace'].queryset = Workplace.objects.none()
 
         self.label_suffix = "" # Remove default ":"
 
