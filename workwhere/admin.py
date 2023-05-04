@@ -18,8 +18,8 @@ class LocationAdmin(admin.ModelAdmin):
 admin.site.register(Location, LocationAdmin)
 
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('last_name', 'first_name', 'user_id', 'isactive')
-    search_fields = ['last_name', 'first_name', 'user_id']
+    list_display = ('last_name', 'first_name', 'id', 'isactive')
+    search_fields = ['last_name', 'first_name', 'id']
 
 admin.site.register(Employee, EmployeeAdmin)
 

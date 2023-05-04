@@ -78,7 +78,7 @@ class Today(generic.View):
         reservations_today = Reservation.objects.filter(day=timezone.now().date())
         
         locationDict = dict()
-        for location in Location.objects.all():
+        for location in Location.objects.filter(isoffice=True):
             workplaces = Workplace.objects.filter(location=location, location__isoffice=True).order_by('name')
             workplace_status = dict()
             for workplace in workplaces:
@@ -88,7 +88,6 @@ class Today(generic.View):
                     workplace_status[workplace.name] = "free"
 
             locationDict[location.name] = workplace_status
-        print(locationDict)
         context = {
             'desks_today': locationDict,
             'title': f"Reservations on {timezone.now():%A, %B %d (%Y)}"

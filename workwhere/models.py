@@ -5,9 +5,10 @@ from django.core.files.storage import FileSystemStorage
 
 
 class Employee(models.Model):
+    id = models.CharField(max_length=20, primary_key=True)
     first_name = models.CharField(max_length=80)
     last_name = models.CharField(max_length=80)
-    user_id = models.CharField(max_length=20, unique=True)
+    
     isactive = models.BooleanField(default=True)
 
     class Meta:
