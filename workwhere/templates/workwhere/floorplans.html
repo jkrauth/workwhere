@@ -4,11 +4,19 @@
 
 {% include "workwhere/title.html" with title="Office floor maps" %}
 
-<ul>
+{% if object_list %}
+<div class="container">
+
     {% for floormap in object_list %}
-    <h2>{{ floormap }}</h2>
-    <img class="workplace-img" src="{{ floormap.floormap.url }}" alt="{{ floormap.name }}" />
+    <div class="col">
+        <h2>{{ floormap }}</h2>
+        <img class="workplace-img" src="{{ floormap.floormap.url }}" alt="{{ floormap.name }}" />
+    </div>
     {% endfor %}
-</ul>
+    
+</div>
+{% else %}
+<p>No floor maps are available.</p>
+{% endif %}
 
 {% endblock %}
