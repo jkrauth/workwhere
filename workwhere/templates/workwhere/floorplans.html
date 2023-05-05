@@ -8,12 +8,14 @@
 <div class="container">
 
     {% for floormap in object_list %}
-    <div class="col">
-        <h2>{{ floormap }}</h2>
-        <img class="workplace-img" src="{{ floormap.floormap.url }}" alt="{{ floormap.name }}" />
+    <div class="row">
+        <div class="col">
+            <h2>{{ floormap }}</h2>
+            <img class="workplace-img" src="{{ floormap.floormap.url }}" alt="{{ floormap.name }}" />
+        </div>
     </div>
     {% endfor %}
-    
+
 </div>
 {% else %}
 <p>No floor maps are available.</p>

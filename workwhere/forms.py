@@ -1,10 +1,10 @@
 import datetime
+
 from workalendar.europe import Spain
 from django.core.exceptions import ValidationError
 from django import forms
 from django.db.models import Q
 
-import datetime
 from .models import Reservation, Workplace, Employee
 
 
@@ -62,8 +62,7 @@ class ReservationForm(forms.ModelForm):
         if data > datetime.date.today() + datetime.timedelta(weeks=4):
             raise ValidationError('Invalid date - date more than 4 weeks into the future')
 
-        es_calendar = Spain()
-        if not es_calendar.is_working_day(data):
+        if not Spain().is_working_day(data):
             raise ValidationError('Invalid date - not a working day')
 
         return data 

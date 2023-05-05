@@ -1,14 +1,14 @@
-from django.http import HttpResponseRedirect
+import datetime
+import calendar
+
 from django.utils import timezone
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.http import Http404
+from django.contrib.auth.decorators import login_required
 
-
-import datetime
-
-from .models import Reservation, Workplace, Employee, Floor, Location
+from .models import Reservation, Workplace, Floor, Location
 from .forms import ReservationForm
 
 
@@ -121,11 +121,10 @@ def week(request, year, week):
     context = {
         'data': data,
         'title': 'Workplace availability',
-        'year': year,
-        'week': week,
-        'prev_week': week-1,
-        'next_week': week+1,
-        'day_range': f"{monday:%d.%m.} to {friday:%d.%m.}"
+        'date': monday.isocalendar(),
+        'prev': (monday - datetime.timedelta(weeks=1)).isocalendar(),
+        'next': (monday + datetime.timedelta(weeks=1)).isocalendar(),
+        'day_range': f"{monday:%d.%m.} to {friday:%d.%m.}",
     }
 
     return render(request, 'workwhere/week.html', context)
@@ -137,3 +136,53 @@ class WeekRedirect(generic.RedirectView):
 class Floorplans(generic.ListView):
     model = Floor
     template_name = 'workwhere/floorplans.html'
+
+
+from workalendar.europe import Spain
+
+@login_required
+def summary(request, year, month):
+    """
+    Gets reservation summary data for employees in a given month.
+    """
+    try:
+        first = datetime.date(year, month, 1)
+        last = datetime.date(year, month, calendar.monthrange(year, month)[1])
+    except ValueError:
+        raise Http404('Year or month not valid.')
+
+    workdays_count = Spain().get_working_days_delta(first, last)
+    
+    report = dict()
+    for reservation in Reservation.objects.filter(day__year=year, day__month=month):
+        if reservation.employee.id in report:
+            report[reservation.employee.id]['reservation_count'] += 1
+            if reservation.workplace.location.isoffice:
+                report[reservation.employee.id]['office_count'] += 1
+        else:
+            report[reservation.employee.id] = {
+                'name': str(reservation.employee),
+                'reservation_count': 0,
+                'office_count': 0,
+                'office_rate': None,
+                'reservation_rate': None,
+            }
+    
+    for employee in report:
+        report[employee]['office_rate'] = 100*report[employee]['office_count'] / workdays_count
+        report[employee]['reservation_rate'] = 100*report[employee]['reservation_count'] / workdays_count
+
+    context = {
+        'data': report,
+        'workdays_count': workdays_count,
+        'title': f'Summary',
+        'date': first,
+        'prev': (first - datetime.timedelta(days=1)).replace(day=1),
+        'next': (first + datetime.timedelta(days=31)).replace(day=1),        
+    }
+
+    return render(request, 'workwhere/summary.html', context)
+
+class SummaryRedirect(generic.RedirectView):
+    def get_redirect_url(self):
+        return reverse('workwhere:summary', args=(timezone.now().year, timezone.now().month))
