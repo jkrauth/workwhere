@@ -162,8 +162,8 @@ def summary(request, year, month):
         else:
             report[reservation.employee.id] = {
                 'name': str(reservation.employee),
-                'reservation_count': 0,
-                'office_count': 0,
+                'reservation_count': 1,
+                'office_count': 1 if reservation.workplace.location.isoffice else 0,
                 'office_rate': None,
                 'reservation_rate': None,
             }

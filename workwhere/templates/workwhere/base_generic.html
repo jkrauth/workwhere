@@ -46,7 +46,9 @@
             <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:floorplans' %}">Map</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:today' %}">Today</a></li>
             {% if user.is_authenticated %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:summary_redirect' %}">Month Summary</a>
+            <hr>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'workwhere:summary_redirect' %}">Month Summary</a>
             </li>
             {% endif %}
           </ul>
