@@ -24,8 +24,8 @@
       data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="navbar-nav">
-      <div class="nav-item text-nowrap">
+    <div class="navbar-nav w-100">
+      <div class="nav-item text-nowrap ms-auto">
         {% if user.is_authenticated %}
         <a class="nav-link px-3" href="{% url 'logout' %}?next={{ request.path }}">{{ user.get_username }}: Sign out</a>
         {% else %}
@@ -45,13 +45,13 @@
             <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:week_redirect' %}">Week</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:floorplans' %}">Map</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:today' %}">Today</a></li>
-            {% if user.is_authenticated %}
-            <hr>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'workwhere:summary_redirect' %}">Month Summary</a>
-            </li>
-            {% endif %}
           </ul>
+          {% if user.is_authenticated %}
+          <hr>
+          <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:summary_redirect' %}">Month Summary</a></li>
+          </ul>
+          {% endif %}
           {% endblock %}
         </div>
       </nav>
@@ -59,6 +59,9 @@
         {% block content %}{% endblock %}
       </main>
     </div>
+    <footer class="row">
+      bla
+    </footer>
   </div>
 </body>
 

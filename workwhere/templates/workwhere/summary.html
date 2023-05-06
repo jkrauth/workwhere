@@ -33,7 +33,7 @@
             {% endif %}
 
             {% if employee.office_rate >= 20 %}
-            <td class="table-success">{{ employee.office_rate|floatformat:1 }}</td>
+            <td class="table-success">{{ employee.office_rate|floatformat:1 }}%</td>
             {% else %}
             <td class="table-warning">{{ employee.office_rate|floatformat:1 }}%</td>
             {% endif %}
