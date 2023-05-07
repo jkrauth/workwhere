@@ -131,7 +131,11 @@ def week(request, year, week):
 
 class WeekRedirect(generic.RedirectView):
     def get_redirect_url(self):
-        return reverse('workwhere:week', args=(timezone.now().year, timezone.now().isocalendar()[1]))
+        # Use +2 days in the future, so on Saturday it already
+        # switches to the coming week.
+        now = timezone.now() + datetime.timedelta(days=2)
+
+        return reverse('workwhere:week', args=(now.year, now.isocalendar()[1]))
 
 class Floorplans(generic.ListView):
     model = Floor
@@ -185,4 +189,7 @@ def summary(request, year, month):
 
 class SummaryRedirect(generic.RedirectView):
     def get_redirect_url(self):
-        return reverse('workwhere:summary', args=(timezone.now().year, timezone.now().month))
+        first_of_this_month = timezone.now().replace(day=1)
+        year_of_last_month = (first_of_this_month - datetime.timedelta(days=1)).year
+        last_month = (first_of_this_month - datetime.timedelta(days=1)).month
+        return reverse('workwhere:summary', args=(year_of_last_month, last_month))
