@@ -39,18 +39,20 @@
       <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
         <div class="position-sticky pt-3">
           {% block sidebar %}
+          {% with request.resolver_match.url_name as url_name %}
           <ul class="nav flex-column">
-            <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:index' %}">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:week_redirect' %}">Week</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:floorplans' %}">Map</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:today' %}">Today</a></li>
+            <li class="nav-item"><a class="nav-link {% if url_name == 'index' %}active{% endif %}" href="{% url 'workwhere:index' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link {% if url_name == 'week' %}active{% endif %}" href="{% url 'workwhere:week_redirect' %}">Week</a></li>
+            <li class="nav-item"><a class="nav-link {% if url_name == 'floorplans' %}active{% endif %}" href="{% url 'workwhere:floorplans' %}">Map</a></li>
+            <li class="nav-item"><a class="nav-link {% if url_name == 'today' %}active{% endif %}" href="{% url 'workwhere:today' %}">Today</a></li>
           </ul>
           {% if user.is_authenticated %}
           <hr>
           <ul class="nav flex-column">
-            <li class="nav-item"><a class="nav-link" href="{% url 'workwhere:summary_redirect' %}">Month Summary</a></li>
+            <li class="nav-item"><a class="nav-link {% if url_name == 'summary' %}active{% endif %}" href="{% url 'workwhere:summary_redirect' %}">Month Summary</a></li>
           </ul>
           {% endif %}
+          {% endwith %}
           {% endblock %}
         </div>
       </nav>
@@ -58,9 +60,6 @@
         {% block content %}{% endblock %}
       </main>
     </div>
-    <footer class="row">
-      bla
-    </footer>
   </div>
 </body>
 

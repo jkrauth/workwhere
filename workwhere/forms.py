@@ -44,9 +44,9 @@ class ReservationForm(forms.ModelForm):
                 day = self.data['day']
                 employee = self.data['employee']
 
-                other_desk_reservations_today = Reservation.objects.filter(day=day, workplace__location__isoffice=True).exclude(employee=employee)
+                other_desk_reservations_today = Reservation.objects.filter(day=day, workplace__floor__location__isoffice=True).exclude(employee=employee)
                 available_workplaces = Workplace.objects.exclude(reservation__in=other_desk_reservations_today)
-                self.fields['workplace'].queryset = available_workplaces.order_by('location__isoffice')
+                self.fields['workplace'].queryset = available_workplaces.order_by('floor__location__isoffice')
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty workplace queryset
 

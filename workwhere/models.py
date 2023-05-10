@@ -9,6 +9,7 @@ class Employee(models.Model):
     first_name = models.CharField(max_length=80)
     last_name = models.CharField(max_length=80)
     
+    isstudent = models.BooleanField(default=False)
     isactive = models.BooleanField(default=True)
 
     class Meta:
@@ -34,7 +35,7 @@ class Floor(models.Model):
     # One common office space with an individual floor map showing the desks.
     name = models.CharField(max_length=80)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    floormap = models.ImageField(upload_to='floormaps')
+    floormap = models.ImageField(upload_to='floormaps', blank=True)
 
     def __str__(self):
         return f"{self.location} - {self.name}"
@@ -44,7 +45,7 @@ class Workplace(models.Model):
     # e.g. A1-1, A3-2 or also Homeoffice, Travel, NA
 
     name = models.CharField(max_length=20, unique=True)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    floor = models.ForeignKey(Floor, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -69,7 +70,7 @@ class Reservation(models.Model):
         # Such related constraints don't work as a UniqueConstraint. 
         # This is therefore a workaround.
         qs1 = Reservation.objects.filter(day=self.day, workplace=self.workplace)
-        if qs1.filter(workplace__location__isoffice=True).exclude(employee=self.employee).exists():
+        if qs1.filter(workplace__floor__location__isoffice=True).exclude(employee=self.employee).exists():
             raise ValidationError('Only one reservation per day and office workplace.')
 
         # Instead of a unique_employee_per_day UniqueConstraint we do 

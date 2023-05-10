@@ -51,8 +51,8 @@ def load_workplaces(request):
     employee = request.GET.get('employee')
     reserved_pk = None
     if day and employee:
-        other_desk_reservations_today = Reservation.objects.filter(day=day, workplace__location__isoffice=True).exclude(employee=employee)
-        choice_workplaces = Workplace.objects.exclude(reservation__in=other_desk_reservations_today).order_by('location__isoffice', 'name')
+        other_desk_reservations_today = Reservation.objects.filter(day=day, workplace__floor__location__isoffice=True).exclude(employee=employee)
+        choice_workplaces = Workplace.objects.exclude(reservation__in=other_desk_reservations_today).order_by('floor__location__isoffice', 'name')
 
         already_reserved_workplace = Workplace.objects.filter(reservation__employee=employee, reservation__day=day)
         if already_reserved_workplace.exists():
@@ -77,9 +77,9 @@ class Today(generic.View):
     def get(self, request):
         reservations_today = Reservation.objects.filter(day=timezone.now().date())
         
-        locationDict = dict()
-        for location in Location.objects.filter(isoffice=True):
-            workplaces = Workplace.objects.filter(location=location, location__isoffice=True).order_by('name')
+        floorDict = dict()
+        for floor in Floor.objects.filter(location__isoffice=True):
+            workplaces = Workplace.objects.filter(floor=floor, floor__location__isoffice=True).order_by('name')
             workplace_status = dict()
             for workplace in workplaces:
                 try:
@@ -87,9 +87,9 @@ class Today(generic.View):
                 except Reservation.DoesNotExist: 
                     workplace_status[workplace.name] = "free"
 
-            locationDict[location.name] = workplace_status
+            floorDict[floor] = workplace_status
         context = {
-            'desks_today': locationDict,
+            'desks_today': floorDict,
             'title': f"Reservations on {timezone.now():%A, %B %d (%Y)}"
         }
 
@@ -108,7 +108,7 @@ def week(request, year, week):
     weekdays = [monday + datetime.timedelta(days=i) for i in range(5)]
     weekday_names = [day.strftime("%A") for day in weekdays]
     data = [['', *weekday_names]]
-    for workplace in Workplace.objects.filter(location__isoffice=True).order_by('name'):
+    for workplace in Workplace.objects.filter(floor__location__isoffice=True).order_by('name'):
         row = [workplace]
         for day in weekdays:
             try:
@@ -161,13 +161,13 @@ def summary(request, year, month):
     for reservation in Reservation.objects.filter(day__year=year, day__month=month):
         if reservation.employee.id in report:
             report[reservation.employee.id]['reservation_count'] += 1
-            if reservation.workplace.location.isoffice:
+            if reservation.workplace.floor.location.isoffice:
                 report[reservation.employee.id]['office_count'] += 1
         else:
             report[reservation.employee.id] = {
                 'name': str(reservation.employee),
                 'reservation_count': 1,
-                'office_count': 1 if reservation.workplace.location.isoffice else 0,
+                'office_count': 1 if reservation.workplace.floor.location.isoffice else 0,
                 'office_rate': None,
                 'reservation_rate': None,
             }

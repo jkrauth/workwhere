@@ -3,9 +3,9 @@
 {% if desks_today %}
 <div class="container">
     <div class="row row-cols-3">
-        {% for location, reservations in desks_today.items %}
+        {% for floor, desks in desks_today.items %}
         <div class="col-md-4">
-            <h2>{{ location }}</h2>
+            <h2>{{ floor }}</h2>
 
             <table class="table todaytable">
                 <thead>
@@ -15,12 +15,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for desk, reservation in reservations.items %}
+                    {% if desks %}
+                    {% for desk, status in desks.items %}
                     <tr>
                         <td>{{desk}}</td>
-                        <td>{{reservation}}</td>
+                        <td>{{status}}</td>
                     </tr>
                     {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="2">No desks on this floor</td>
+                    </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>
