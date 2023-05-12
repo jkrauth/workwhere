@@ -7,13 +7,13 @@ class ReservationAdmin(admin.ModelAdmin):
 
 admin.site.register(Reservation, ReservationAdmin)
 
-class WorkplaceInline(admin.TabularInline):
+class FloorInline(admin.TabularInline):
     model = Floor
     extra = 3
 
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('name', 'isoffice')
-    inlines = [WorkplaceInline]
+    inlines = [FloorInline]
 
 admin.site.register(Location, LocationAdmin)
 
@@ -28,5 +28,12 @@ class WorkplaceAdmin(admin.ModelAdmin):
 
 admin.site.register(Workplace, WorkplaceAdmin)
 
-admin.site.register(Floor)
+class WorkplaceInline(admin.TabularInline):
+    model = Workplace
+    extra = 3
+
+class FloorAdmin(admin.ModelAdmin):
+    inlines = [WorkplaceInline]
+
+admin.site.register(Floor, FloorAdmin)
 
