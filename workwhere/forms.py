@@ -28,12 +28,11 @@ class ReservationForm(forms.ModelForm):
 
         self.fields['day'].widget = forms.DateInput(attrs={
             'class': 'form-control', 
-            'type': 'date',  # <--- IF I REMOVE THIS LINE, THE INITIAL VALUE IS DISPLAYED
+            'type': 'date',
             'min': str(datetime.date.today()),
             'max': str(datetime.date.today()+datetime.timedelta(weeks=4)),
             })
 
-        #self.fields['workplace'].widget = SearchSelect(attrs={'class': 'form-control', 'placeholder': 'Type to search...'})
         self.fields['workplace'].widget.attrs.update({'class': 'form-select selectpicker'})
         self.fields['workplace'].queryset = Workplace.objects.none()
 
@@ -44,9 +43,13 @@ class ReservationForm(forms.ModelForm):
                 day = self.data['day']
                 employee = self.data['employee']
 
-                other_desk_reservations_today = Reservation.objects.filter(day=day, workplace__floor__location__isoffice=True).exclude(employee=employee)
-                available_workplaces = Workplace.objects.exclude(reservation__in=other_desk_reservations_today)
-                self.fields['workplace'].queryset = available_workplaces.order_by('floor__location__isoffice')
+                other_desk_reservations_today = Reservation.objects \
+                    .filter(day=day, workplace__floor__location__isoffice=True) \
+                    .exclude(employee=employee)
+                available_workplaces = Workplace.objects \
+                    .exclude(reservation__in=other_desk_reservations_today)
+                self.fields['workplace'].queryset = available_workplaces \
+                    .order_by('floor__location__isoffice')
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty workplace queryset
 
