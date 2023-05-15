@@ -7,6 +7,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count, Q
 
 from .models import Reservation, Workplace, Floor, Location
 from .forms import ReservationForm
@@ -22,7 +23,7 @@ def index(request):
             selected_day = form.cleaned_data['day']
             selected_workplace = form.cleaned_data['workplace']
 
-            reservation, created = Reservation.objects.update_or_create(
+            _, _ = Reservation.objects.update_or_create(
                 day=selected_day, 
                 employee=selected_employee,
                 defaults={'workplace': selected_workplace})         
@@ -51,10 +52,15 @@ def load_workplaces(request):
     employee = request.GET.get('employee')
     reserved_pk = None
     if day and employee:
-        other_desk_reservations_today = Reservation.objects.filter(day=day, workplace__floor__location__isoffice=True).exclude(employee=employee)
-        choice_workplaces = Workplace.objects.exclude(reservation__in=other_desk_reservations_today).order_by('floor__location__isoffice', 'name')
+        other_desk_reservations_today = Reservation.objects \
+            .filter(day=day, workplace__floor__location__isoffice=True) \
+            .exclude(employee=employee)
+        choice_workplaces = Workplace.objects \
+            .exclude(reservation__in=other_desk_reservations_today) \
+            .order_by('floor__location__isoffice', 'name')
 
-        already_reserved_workplace = Workplace.objects.filter(reservation__employee=employee, reservation__day=day)
+        already_reserved_workplace = Workplace.objects \
+            .filter(reservation__employee=employee, reservation__day=day)
         if already_reserved_workplace.exists():
             reserved_pk = already_reserved_workplace.first().pk
     else:
@@ -75,21 +81,24 @@ class Today(generic.View):
     template_name = 'workwhere/today.html'
 
     def get(self, request):
-        reservations_today = Reservation.objects.filter(day=timezone.now().date())
+        reservations_today = Reservation.objects \
+            .filter(day=timezone.now().date()) \
+            .select_related('employee')
         
-        floorDict = dict()
+        status = {}
         for floor in Floor.objects.filter(location__isoffice=True):
+            if floor not in status:
+                status[floor] = {}
+
             workplaces = Workplace.objects.filter(floor=floor, floor__location__isoffice=True).order_by('name')
-            workplace_status = dict()
             for workplace in workplaces:
                 try:
-                    workplace_status[workplace.name] = reservations_today.get(workplace=workplace).employee
+                    status[floor][workplace.name] = reservations_today.get(workplace=workplace).employee
                 except Reservation.DoesNotExist: 
-                    workplace_status[workplace.name] = "free"
+                    status[floor][workplace.name] = "free"
 
-            floorDict[floor] = workplace_status
         context = {
-            'desks_today': floorDict,
+            'desks_today': status,
             'title': f"Reservations on {timezone.now():%A, %B %d (%Y)}"
         }
 
@@ -157,35 +166,77 @@ def summary(request, year, month):
 
     workdays_count = Spain().get_working_days_delta(first, last)
     
-    report = dict()
-    for reservation in Reservation.objects.filter(day__year=year, day__month=month):
-        if reservation.employee.id in report:
-            report[reservation.employee.id]['reservation_count'] += 1
-            if reservation.workplace.floor.location.isoffice:
-                report[reservation.employee.id]['office_count'] += 1
-        else:
-            report[reservation.employee.id] = {
-                'name': str(reservation.employee),
-                'reservation_count': 1,
-                'office_count': 1 if reservation.workplace.floor.location.isoffice else 0,
-                'office_rate': None,
-                'reservation_rate': None,
-            }
-    
-    for employee in report:
-        report[employee]['office_rate'] = 100*report[employee]['office_count'] / workdays_count
-        report[employee]['reservation_rate'] = 100*report[employee]['reservation_count'] / workdays_count
+    report_per_person = _get_per_person_summary(year, month, workdays_count)
+
+    report_per_day = _get_per_day_summary(year, month, workdays_count)
 
     context = {
-        'data': report,
+        'data_per_person': report_per_person,
         'workdays_count': workdays_count,
-        'title': f'Summary',
+        'data_per_day': report_per_day,
         'date': first,
         'prev': (first - datetime.timedelta(days=1)).replace(day=1),
         'next': (first + datetime.timedelta(days=31)).replace(day=1),        
     }
 
     return render(request, 'workwhere/summary.html', context)
+
+def _get_per_day_summary(year, month, workdays_count):
+    reservations = Reservation.objects \
+        .filter(day__year=year, day__month=month, workplace__floor__location__isoffice=True) \
+        .select_related('workplace__floor__location')
+
+    reservation_counts = reservations.values('day', 'workplace__floor__location__name', 'employee__isstudent') \
+        .annotate(count_all=Count('id'), count_nonstudent=Count('id', filter=Q(employee__isstudent=False)))
+
+    result = {}
+
+    for count in reservation_counts:
+        day = count['day']
+        location_name = count['workplace__floor__location__name']
+        reservation_count = count['count_all']
+        nonstudent_count = count['count_nonstudent']
+
+        if location_name not in result:
+            result[location_name] = {}
+            result[location_name]['per_day'] = {}
+            result[location_name]['total'] = 0
+            result[location_name]['total_nonstudent'] = 0
+
+
+        result[location_name]['per_day'][day] = reservation_count
+        result[location_name]['total'] += 1
+        if not count['employee__isstudent']:
+            result[location_name]['total_nonstudent'] += 1
+
+    for location in result.keys():
+        total_workplaces_this_month = workdays_count * Workplace.objects.filter(floor__location__name=location).count()
+        result[location]['total_rate'] = 100*result[location]['total']/total_workplaces_this_month
+        result[location]['total_nonstudent_rate'] = 100*result[location]['total_nonstudent']/total_workplaces_this_month
+
+    return result
+
+def _get_per_person_summary(year, month, workdays_count):
+    reservations = Reservation.objects \
+        .filter(day__year=year, day__month=month) \
+        .select_related('employee')
+
+    reservation_counts = reservations.values('employee__id', 'employee__first_name', 'employee__last_name') \
+        .annotate(total_count=Count('id'), office_count=Count('id', filter=Q(workplace__floor__location__isoffice=True)))
+
+    result = {}
+
+    for count in reservation_counts:
+        full_name = f"{count['employee__first_name']} {count['employee__last_name']}"
+        result[count['employee__id']] = {
+            'name': full_name,
+            'total_count': count['total_count'],
+            'total_rate': count['total_count']/workdays_count*100,
+            'office_count': count['office_count'],
+            'office_rate': count['office_count']/workdays_count*100,
+        }
+
+    return result
 
 class SummaryRedirect(generic.RedirectView):
     def get_redirect_url(self):
