@@ -133,3 +133,9 @@ body {
 .summaryblock {
   padding-left: 10px;
 }
+
+.workplace-img {
+  max-width: 100%;
+  max-height: 100%;
+  margin-bottom: 20px;
+}
