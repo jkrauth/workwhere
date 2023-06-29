@@ -6,10 +6,10 @@ Detailed documentation is (not yet) stored in the "docs" directory.
 
 ## Installation
 
-Clone the workwhere app from Github. 
-In the terminal, go to the repository of your django page. If you don't have a Django page yet, follow the [django tutorial](https://docs.djangoproject.com/en/4.1/intro/tutorial01/#creating-a-project) to create your own project.
+Clone the WorkWhere app from Github. 
+In the terminal, go to the repository of your Django page. If you don't have a Django page yet, follow the [Django tutorial](https://docs.djangoproject.com/en/4.1/intro/tutorial01/#creating-a-project) to create your own project.
 
-Next, install the django app and its requirements by
+Next, install the WorkWhere app and its requirements by
 
 ```
 pip install [-e] path/to/workwhere
@@ -19,7 +19,7 @@ Use the `-e` option if you are a developer and add changes to the application.
 
 ## Quick start
 
-This section explains how to integrate the workwhere app into your Django website, after successfull installation.
+This section explains how to integrate the WorkWhere app into your Django website, after successfull installation.
 
 ### 1. Add "workwhere" to your INSTALLED_APPS setting.
 
@@ -37,7 +37,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 ```
 
-### 2. Include the workwhere URLconf in your project urls.py
+### 2. Include the WorkWhere URLconf in your project urls.py
 
 ```python
 path('workwhere/', include('workwhere.urls')),
