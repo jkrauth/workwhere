@@ -38,10 +38,13 @@ def index(request):
         alert = None
         message = None
 
+    maps = Floor.objects.all()
+
     context = {
         'form': form,
         'alert': alert,
-        'message': message
+        'message': message,
+        'maps': maps
     }
 
     return render(request, 'workwhere/index.html', context)

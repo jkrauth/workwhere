@@ -3,41 +3,96 @@
 {% block content %}
 {% include "workwhere/title.html" with title="Reserve your spot" %}
 
-<form method="post" id="reservationForm" data-workplaces-url="{% url 'workwhere:ajax_load_workplaces' %}"
-  class="row g-3">
-  {% csrf_token %}
-  <div class="col-md-3">
-    <label for="{{ form.employee.id_for_label }}" class="form-label">{{ form.employee.label }}</label>
-    {{ form.employee }}
-  </div>
-  <div class="col-md-3">
-    <label for="{{ form.day.id_for_label }}" class="form-label">{{ form.day.label }}</label>
-    {{ form.day }}
-    <div class="btn-group" role="group" aria-label="switch-button">
-      <button type="button" class="btn btn-secondary btn-sm" id="prev-day-btn">&laquo;</button>
-      <button type="button" class="btn btn-secondary btn-sm" id="next-day-btn">&raquo;</button>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <form method="post" id="reservationForm" data-workplaces-url="{% url 'workwhere:ajax_load_workplaces' %}"
+        class="row g-3">
+        {% csrf_token %}
+        <div class="col-md-3">
+          <label for="{{ form.employee.id_for_label }}" class="form-label">{{ form.employee.label }}</label>
+          {{ form.employee }}
+        </div>
+        <div class="col-md-3">
+          <label for="{{ form.day.id_for_label }}" class="form-label">{{ form.day.label }}</label>
+          {{ form.day }}
+          <div class="btn-group" role="group" aria-label="switch-button">
+            <button type="button" class="btn btn-secondary btn-sm" id="prev-day-btn">&laquo;</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="next-day-btn">&raquo;</button>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label for="{{ form.workplace.id_for_label }}" class="form-label">{{ form.workplace.label }}</label>
+          {{ form.workplace }}
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+        <div id="alert">
+          {% if alert == "success" %}
+          <div class="col-5 alert alert-success" role="alert">
+            {{ message }}
+          </div>
+          {% elif alert == "error" %}
+          <div class="col-5 alert alert-danger" role="alert">
+            {{ message }}
+            {{ form.errors }}
+          </div>
+          {% endif %}
+        </div>
+      </form>
     </div>
   </div>
-  <div class="col-md-3">
-    <label for="{{ form.workplace.id_for_label }}" class="form-label">{{ form.workplace.label }}</label>
-    {{ form.workplace }}
-  </div>
-  <div class="col-12">
-    <button class="btn btn-primary" type="submit">Save</button>
-  </div>
-  <div id="alert">
-    {% if alert == "success" %}
-    <div class="col-5 alert alert-success" role="alert">
-      {{ message }}
+  <div class="row">
+    <div class="col">
+      <hr>
+      <h4>Office floor maps</h4>
+      {% if maps %}
+      <div class="container">
+        <div class="row">
+          {% for floormap in maps %}
+          {% if floormap.floormap %}
+          <div class="col" style="padding-bottom: 10px;">
+            <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                <h5 class="card-title">{{ floormap }}</h5>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                  data-bs-target="#modal{{ forloop.counter }}">
+                  Show map
+                </button>
+              </div>
+            </div>
+
+            <div class="modal fade" id="modal{{ forloop.counter }}" tabindex="-1" aria-labelledby="modalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog modal-lg modal-fullscreen-xl-down">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalLabel">{{ floormap }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <img class="workplace-img" src="{{ floormap.floormap.url }}" alt="{{ floormap.name }}" />
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% else %}
+      <p>No floor maps are available.</p>
+      {% endif %}
     </div>
-    {% elif alert == "error" %}
-    <div class="col-5 alert alert-danger" role="alert">
-      {{ message }}
-      {{ form.errors }}
-    </div>
-    {% endif %}
   </div>
-</form>
+</div>
+
+
 
 
 
@@ -79,7 +134,7 @@
     });
 
     setTimeout(function () {
-      document.getElementById("alert").style.display = "none";
+      document.getElementById("alert").style.visibility = "hidden";
     }, 3000);
 
 
