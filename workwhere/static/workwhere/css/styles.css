@@ -139,3 +139,18 @@ body {
   max-height: 100%;
   margin-bottom: 20px;
 }
+
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  padding: 5px 0;
+  color: gray;
+  font-size: 11px;
+}
+
+.sidebar-footer a {
+  color: gray;
+  text-decoration: underline;
+}
