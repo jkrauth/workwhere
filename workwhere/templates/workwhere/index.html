@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="col-md-3">
-          <label for="{{ form.workplace.id_for_label }}" class="form-label">{{ form.workplace.label }}</label>
+          <label for="{{ form.workplace.id_for_label }}" class="form-label" data-bs-toggle="tooltip" data-bs-html="true" title="GL: group leaders (available after 4pm the day before)<br>PL: project leaders (noisy)">{{ form.workplace.label }} &#x1f6c8;</label>
           {{ form.workplace }}
         </div>
         <div class="col-12">
@@ -96,6 +96,7 @@
       document.getElementById("alert").style.visibility = "hidden";
     }, 3000);
 
+    $('[data-bs-toggle="tooltip"]').tooltip();  
 
   });
 
