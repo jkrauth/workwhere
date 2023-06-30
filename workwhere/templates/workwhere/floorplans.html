@@ -1,19 +1,13 @@
-{% extends "workwhere/base_generic.html" %}
-
-{% block content %}
-
-{% include "workwhere/title.html" with title="Office floor maps" %}
-
-{% if object_list %}
+{% if maps %}
 <div class="container">
     <div class="row">
-        {% for floormap in object_list %}
+        {% for floormap in maps %}
         {% if floormap.floormap %}
         <div class="col" style="padding-bottom: 10px;">
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
                     <h5 class="card-title">{{ floormap }}</h5>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
                         data-bs-target="#modal{{ forloop.counter }}">
                         Show map
                     </button>
@@ -45,5 +39,3 @@
 {% else %}
 <p>No floor maps are available.</p>
 {% endif %}
-
-{% endblock %}

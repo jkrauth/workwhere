@@ -149,10 +149,6 @@ class WeekRedirect(generic.RedirectView):
 
         return reverse('workwhere:week', args=(now.year, now.isocalendar()[1]))
 
-class Floorplans(generic.ListView):
-    model = Floor
-    template_name = 'workwhere/floorplans.html'
-
 
 from workalendar.europe import Spain
 

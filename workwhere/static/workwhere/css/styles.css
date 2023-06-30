@@ -95,6 +95,12 @@ body {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
 
+.custom-container {
+  margin-left: 0; /* Remove left margin */
+  padding-left: 10px; /* Adjust the value as needed */
+  padding-right: 10px; /* Adjust the value as needed */  
+}
+
 
 .weektable thead th:nth-child(1) {
   width: 10%;

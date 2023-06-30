@@ -43,7 +43,6 @@
           <ul class="nav flex-column">
             <li class="nav-item"><a class="nav-link {% if url_name == 'index' %}active{% endif %}" href="{% url 'workwhere:index' %}">Home</a></li>
             <li class="nav-item"><a class="nav-link {% if url_name == 'week' %}active{% endif %}" href="{% url 'workwhere:week_redirect' %}">Week</a></li>
-            <li class="nav-item"><a class="nav-link {% if url_name == 'floorplans' %}active{% endif %}" href="{% url 'workwhere:floorplans' %}">Map</a></li>
             <li class="nav-item"><a class="nav-link {% if url_name == 'today' %}active{% endif %}" href="{% url 'workwhere:today' %}">Today</a></li>
           </ul>
           {% if user.is_authenticated %}
