@@ -19,7 +19,6 @@ class ReservationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        #self.fields['employee'].widget.attrs.update({'class': 'form-select selectpicker'})
         self.fields['employee'].widget = SearchSelect(attrs={
             'class': 'form-control', 
             'placeholder': 'Type to search...',
