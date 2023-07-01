@@ -14,7 +14,9 @@ from .forms import ReservationForm
 
 
 def index(request):
-    # The reservation page
+    """
+    The reservation main page.
+    """
     if request.method == 'POST':
         form = ReservationForm(request.POST)
         print(request.POST)
@@ -29,7 +31,6 @@ def index(request):
                 defaults={'workplace': selected_workplace})         
             alert = "success"
             message = f"Reserved: {selected_employee.first_name}, {selected_day: %d.%m.}, {selected_workplace}"
-            #return HttpResponseRedirect(reverse('workwhere:today')) # Redirect somewhere else in case of success
         else:
             alert = "error"
             message = "Reservation failed"
@@ -51,6 +52,11 @@ def index(request):
 
 
 def load_workplaces(request):
+    """
+    Load the free workplace options available for an employee on a
+    specific day. Needed in the reservatino form on the index page.
+    """
+    
     day = request.GET.get('day')
     employee = request.GET.get('employee')
     reserved_pk = None
@@ -80,6 +86,7 @@ def load_workplaces(request):
 class Today(generic.View):
     """
     Gets reservation data on office workplaces for current day.
+    Helps to find free places and who sits where.
     """
     template_name = 'workwhere/today.html'
 
