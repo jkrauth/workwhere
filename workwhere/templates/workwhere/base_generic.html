@@ -55,7 +55,11 @@
           {% endblock %}
         </div>
         <div class="sidebar-footer">
-          <p class="text-center">made with &#x2665; by <a href="https://github.com/jkrauth/workwhere" target="_blank">jkrauth</a></p>
+          {% load version_info %}
+          <p class="text-center">
+            made with &#x2665; by <a href="https://github.com/jkrauth/workwhere" target="_blank">jkrauth</a><br>
+            v{% version %}
+          </p>
         </div>
       </nav>
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
