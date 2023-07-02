@@ -22,14 +22,14 @@ class Employee(models.Model):
 
 
 class Location(models.Model):
-    '''
+    """
     Typically an office building containing several floors 
     with the same address.
 
     The boolean would only be used for special Locations, which are not 
     counted as office. This allows e.g. to add a Homeoffice workplace.
     Workplaces in non-office locations can be occupied more than once.
-    '''
+    """
     name = models.CharField(max_length=80, unique=True)
     isoffice = models.BooleanField()
 
@@ -38,9 +38,9 @@ class Location(models.Model):
 
 
 class Floor(models.Model):
-    '''
+    """
     One common office space with an individual floor map showing the desks.
-    '''
+    """
 
     name = models.CharField(max_length=80)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
@@ -51,10 +51,10 @@ class Floor(models.Model):
 
 
 class Workplace(models.Model):
-    '''
+    """
     Each desk has some name or number which is defined here.
     E.g. A1-1, A3-2 or (for non-office locations) also Homeoffice, Travel, NA
-    '''
+    """
 
     name = models.CharField(max_length=20, unique=True)
     floor = models.ForeignKey(Floor, on_delete=models.CASCADE)
@@ -77,12 +77,12 @@ class Reservation(models.Model):
     #     ]
 
     def validate_unique_office_place(self, exclude=None):
-        '''
+        """
         Ensure that only workplaces considered as 'isoffice' are 
         unique.
         Such related constraints don't work as a UniqueConstraint. 
         This is therefore a workaround.
-        '''
+        """
         qs1 = Reservation.objects.filter(day=self.day, workplace=self.workplace)
         if qs1.filter(workplace__floor__location__isoffice=True).exclude(employee=self.employee).exists():
             raise ValidationError('Only one reservation per day and office workplace.')
