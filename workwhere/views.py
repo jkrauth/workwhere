@@ -105,7 +105,7 @@ class Today(generic.View):
                 try:
                     status[floor][workplace.name] = reservations_today.get(workplace=workplace).employee
                 except Reservation.DoesNotExist: 
-                    status[floor][workplace.name] = "free"
+                    status[floor][workplace.name] = ""
 
         context = {
             'desks_today': status,
@@ -134,7 +134,7 @@ def week(request, year, week):
                 reserved = Reservation.objects.get(day=day, workplace=workplace)
             except Reservation.DoesNotExist:
                 reserved = False
-            row.append('free' if not reserved else reserved.employee)  
+            row.append('' if not reserved else reserved.employee)  
         data.append(row)
 
     context = {
