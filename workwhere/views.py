@@ -9,7 +9,7 @@ from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 
-from .models import Reservation, Workplace, Floor, Location
+from .models import Reservation, Workplace, Floor, Location, TextInfo
 from .forms import ReservationForm
 
 
@@ -155,6 +155,12 @@ class WeekRedirect(generic.RedirectView):
         now = timezone.now() + datetime.timedelta(days=2)
 
         return reverse('workwhere:week', args=(now.year, now.isocalendar()[1]))
+
+
+class Info(generic.ListView):
+    model = TextInfo
+    template_name = 'workwhere/info.html'
+    ordering = ['order']
 
 
 from workalendar.europe import Spain

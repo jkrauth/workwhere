@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Employee, Workplace, Location, Reservation, Floor
+from .models import Employee, Workplace, Location, Reservation, Floor, TextInfo
 
 class ReservationAdmin(admin.ModelAdmin):
     list_display = ('day', 'workplace', 'employee')
@@ -37,3 +37,7 @@ class FloorAdmin(admin.ModelAdmin):
 
 admin.site.register(Floor, FloorAdmin)
 
+class TextInfoAdmin(admin.ModelAdmin):
+    list_display = ('title', 'order')
+
+admin.site.register(TextInfo, TextInfoAdmin)
