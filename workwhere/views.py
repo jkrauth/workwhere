@@ -9,7 +9,7 @@ from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 
-from .models import Reservation, Workplace, Floor, Location, TextInfo
+from .models import Reservation, Workplace, Floor, TextInfo
 from .forms import ReservationForm
 
 
@@ -163,7 +163,7 @@ class Info(generic.ListView):
     ordering = ['order']
 
 
-from workalendar.europe import Spain
+from workalendar.registry import registry
 
 @login_required
 def summary(request, year, month):
@@ -176,7 +176,8 @@ def summary(request, year, month):
     except ValueError:
         raise Http404('Year or month not valid.')
 
-    workdays_count = Spain().get_working_days_delta(first, last)
+    holidays_calendar = registry.get("ES-AN") # Using iso registry regions like e.g. "ES-AN"
+    workdays_count = holidays_calendar().get_working_days_delta(first, last)
     
     report_per_person = _get_per_person_summary(year, month, workdays_count)
 
