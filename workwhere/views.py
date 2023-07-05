@@ -176,7 +176,10 @@ def summary(request, year, month):
     except ValueError:
         raise Http404('Year or month not valid.')
 
-    holidays_calendar = registry.get("ES-AN") # Using iso registry regions like e.g. "ES-AN"
+    # Using ISO 3166-1 and ISO 3166-2 countries or regions like e.g. "ES-AN"
+    # to select holidays. See also 
+    # https://workalendar.github.io/workalendar/iso-registry.html
+    holidays_calendar = registry.get("ES-AN")
     workdays_count = holidays_calendar().get_working_days_delta(first, last)
     
     report_per_person = _get_per_person_summary(year, month, workdays_count)

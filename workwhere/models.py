@@ -99,6 +99,11 @@ class Reservation(models.Model):
     def __str__(self):
         return f"{self.workplace} by {self.employee} ({self.day})"
 
+class TextInfo(models.Model):
+    """For information shown on the Info page"""
+    title = models.CharField(max_length=80, default="HowTo")
+    content = models.TextField(default="This is some help text")
+    order = models.PositiveIntegerField()
 
 class SingletonModel(models.Model):
     class Meta:
@@ -114,9 +119,3 @@ class SingletonModel(models.Model):
             return cls.objects.get()
         except cls.DoesNotExist:
             return cls()
-
-class TextInfo(models.Model):
-    """For information shown on the Info page"""
-    title = models.CharField(max_length=80, default="HowTo")
-    content = models.TextField(default="This is some help text")
-    order = models.PositiveIntegerField()
