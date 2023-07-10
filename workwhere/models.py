@@ -99,7 +99,7 @@ class Reservation(models.Model):
     def __str__(self):
         return f"{self.workplace} by {self.employee} ({self.day})"
 
-class TextInfo(models.Model):
+class Infotext(models.Model):
     """For information shown on the Info page"""
     title = models.CharField(max_length=80, default="HowTo")
     content = models.TextField(default="This is some help text")

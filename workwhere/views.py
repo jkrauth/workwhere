@@ -9,7 +9,7 @@ from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 
-from .models import Reservation, Workplace, Floor, TextInfo
+from .models import Reservation, Workplace, Floor, Infotext
 from .forms import ReservationForm
 
 
@@ -158,7 +158,7 @@ class WeekRedirect(generic.RedirectView):
 
 
 class Info(generic.ListView):
-    model = TextInfo
+    model = Infotext
     template_name = 'workwhere/info.html'
     ordering = ['order']
 
