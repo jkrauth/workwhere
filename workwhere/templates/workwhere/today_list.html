@@ -19,7 +19,11 @@
                     {% for desk, status in desks.items %}
                     <tr>
                         <td>{{desk}}</td>
+                        {% if status %}
                         <td>{{status}}</td>
+                        {% else %}
+                        <td style="color:#2ECC71">&#9679;</td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                     {% else %}
