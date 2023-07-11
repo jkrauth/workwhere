@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
+from workalendar.registry import registry
+
 
 class Employee(models.Model):
     id = models.CharField(max_length=20, primary_key=True)
@@ -102,7 +104,8 @@ class Reservation(models.Model):
 class Infotext(models.Model):
     """For information shown on the Info page"""
     title = models.CharField(max_length=80, default="HowTo")
-    content = models.TextField(default="This is some help text")
+    content = models.TextField(default="This is some help text", 
+                               help_text="Use html for formatting.")
     order = models.PositiveIntegerField()
 
 class SingletonModel(models.Model):
@@ -118,4 +121,33 @@ class SingletonModel(models.Model):
         try:
             return cls.objects.get()
         except cls.DoesNotExist:
-            return cls()
+            return cls()        
+
+def validate_iso_region(value):
+    """
+    Using ISO 3166-1 and ISO 3166-2 countries or regions like e.g. "ES-AN"
+    to select holidays. See also 
+    https://workalendar.github.io/workalendar/iso-registry.html
+    """
+    if value in registry.get_calendars(include_subregions=True).keys():
+        return value
+    else:
+        raise ValidationError("Only ISO 3166-1 or ISO 3166-2 values.")
+    
+def validate_min_office_percent(value):
+    if value in range(101):
+        return value
+    else:
+        raise ValidationError("Only numbers between 0 and 100.")
+    
+class Settings(SingletonModel):
+    class Meta:
+        verbose_name_plural = "settings"
+
+    iso_region = models.CharField(max_length=20, default='ES-AN', 
+                                  validators=[validate_iso_region], 
+                                  help_text="Set ISO region for correct holidays.")
+    # Threshold for the background color of the summary table.
+    min_office_percent = models.PositiveIntegerField(default=20, 
+                                                     validators=[validate_min_office_percent], 
+                                                     help_text="Threshold for background color in summary table.")

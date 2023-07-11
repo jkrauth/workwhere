@@ -1,10 +1,10 @@
 import datetime
 
-from workalendar.registry import registry
 from django.core.exceptions import ValidationError
 from django import forms
+from workalendar.registry import registry
 
-from .models import Reservation, Workplace, Employee
+from .models import Reservation, Workplace, Employee, Settings
 
 
 class SearchSelect(forms.Select):
@@ -63,7 +63,7 @@ class ReservationForm(forms.ModelForm):
         if data > datetime.date.today() + datetime.timedelta(weeks=4):
             raise ValidationError('Invalid date - date more than 4 weeks into the future')
 
-        holidays_calendar = registry.get("ES-AN")
+        holidays_calendar = registry.get(Settings.load().iso_region)
         if not holidays_calendar().is_working_day(data):
             raise ValidationError('Invalid date - not a working day')
 

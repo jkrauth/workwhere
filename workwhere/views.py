@@ -3,13 +3,14 @@ import calendar
 
 from django.utils import timezone
 from django.shortcuts import render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views import generic
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
+from workalendar.registry import registry
 
-from .models import Reservation, Workplace, Floor, Infotext
+from .models import Reservation, Workplace, Floor, Infotext, Settings
 from .forms import ReservationForm
 
 
@@ -163,8 +164,6 @@ class Info(generic.ListView):
     ordering = ['order']
 
 
-from workalendar.registry import registry
-
 @login_required
 def summary(request, year, month):
     """
@@ -176,10 +175,7 @@ def summary(request, year, month):
     except ValueError:
         raise Http404('Year or month not valid.')
 
-    # Using ISO 3166-1 and ISO 3166-2 countries or regions like e.g. "ES-AN"
-    # to select holidays. See also 
-    # https://workalendar.github.io/workalendar/iso-registry.html
-    holidays_calendar = registry.get("ES-AN")
+    holidays_calendar = registry.get(Settings.load().iso_region)
     workdays_count = holidays_calendar().get_working_days_delta(first, last)
     
     report_per_person = _get_per_person_summary(year, month, workdays_count)
@@ -250,6 +246,7 @@ def _get_per_person_summary(year, month, workdays_count):
             'total_rate': count['total_count']/workdays_count*100,
             'office_count': count['office_count'],
             'office_rate': count['office_count']/workdays_count*100,
+            'office_rate_minimum': Settings.load().min_office_percent,
         }
 
     return result
