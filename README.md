@@ -2,7 +2,7 @@
 
 WorkWhere is a web-based Django app for workplace reservations. It is kept very simple and best suited for small enterprises.
 
-Detailed documentation is (not yet) stored in the "docs" directory.
+A more detailed documentation for usage is stored [here](docs/docs.md).
 
 ## Installation
 
@@ -17,7 +17,7 @@ pip install [-e] path/to/workwhere
 
 Use the `-e` option if you are a developer and add changes to the application. 
 
-## Quick start
+## Integration into your Django project
 
 This section explains how to integrate the WorkWhere app into your Django website, after successfull installation.
 
