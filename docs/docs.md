@@ -15,13 +15,13 @@
 
 This app is made for smaller enterprises (less than 50 workplaces). The offices might be distributed over different buildings or office floors. Maps for the office floors can be added and can be opened from below the reservation form. 
 
-For larger enterprises with more than 50 workplaces, the views become inconvenient and would require different layouts, more search options or other changes currently not foreseen.
+For larger enterprises with more workplaces, the views become inconvenient and would require different layouts, more search options, or other changes currently not foreseen.
 
 Reservations can be done for complete days only.
 
 The app can be used as a pure office workplace reservation app or as a more general tool where employees also add if they e.g. work from home office, are on business travel, or not available. However, for the latter, there are currently no views implemented to show the status per employee.
 
-The app is following an open concept, where each employee can make reservations for each employee or also change other employee's reservations. This keeps the app and its usage simple and allows that employees can also ask colleagues to add or change a reservation for them. In order for this to work well, employees therefore need to use the app responsibly.
+The app follows an open concept, where each employee can make reservations for each employee or also change other employee's reservations. This keeps the app and its usage simple and allows employees to ask colleagues to add or change a reservation for them. In order for this to work well, employees therefore need to use the app responsibly.
 
 ## Installation
 
