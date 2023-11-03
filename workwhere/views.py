@@ -198,7 +198,7 @@ def _get_per_day_summary(year, month, workdays_count):
         .filter(day__year=year, day__month=month, workplace__floor__location__isoffice=True) \
         .select_related('workplace__floor__location')
 
-    reservation_counts = reservations.values('day', 'workplace__floor__location__name', 'employee__isstudent') \
+    reservation_counts = reservations.values('day', 'workplace__floor__location__name') \
         .annotate(count_all=Count('id'), count_nonstudent=Count('id', filter=Q(employee__isstudent=False)))
 
     result = {}
@@ -212,20 +212,21 @@ def _get_per_day_summary(year, month, workdays_count):
         if location_name not in result:
             result[location_name] = {}
             result[location_name]['per_day'] = {}
+            result[location_name]['per_day_nonstudent'] = {}
             result[location_name]['total'] = 0
             result[location_name]['total_nonstudent'] = 0
 
 
         result[location_name]['per_day'][day] = reservation_count
-        result[location_name]['total'] += 1
-        if not count['employee__isstudent']:
-            result[location_name]['total_nonstudent'] += 1
+        result[location_name]['per_day_nonstudent'][day] = nonstudent_count
+        result[location_name]['total'] += reservation_count
+        result[location_name]['total_nonstudent'] += nonstudent_count
 
     for location in result.keys():
         total_workplaces_this_month = workdays_count * Workplace.objects.filter(floor__location__name=location).count()
         result[location]['total_rate'] = 100*result[location]['total']/total_workplaces_this_month
         result[location]['total_nonstudent_rate'] = 100*result[location]['total_nonstudent']/total_workplaces_this_month
-
+        
     return result
 
 def _get_per_person_summary(year, month, workdays_count):
